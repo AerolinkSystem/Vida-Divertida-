@@ -12,10 +12,12 @@ class HomeScreen extends StatelessWidget {
             Text('A Vida Divertida', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.deepOrange)),
             SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/game');
-              },
-              child: Text('Jogar Agora')
+              onPressed: () => Navigator.pushNamed(context, '/create'),
+              child: Text('Criar Sala'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pushNamed(context, '/join'),
+              child: Text('Entrar em Sala'),
             ),
             ElevatedButton(onPressed: () {}, child: Text('Minha Jornada')),
             ElevatedButton(onPressed: () {}, child: Text('Idiomas')),

@@ -1,34 +1,59 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import '../firebase/firebase_mock.dart';
 
-class CreateRoomScreen extends StatelessWidget {
+class CreateRoomScreen extends StatefulWidget {
+  @override
+  _CreateRoomScreenState createState() => _CreateRoomScreenState();
+}
+
+class _CreateRoomScreenState extends State<CreateRoomScreen> {
+  late String roomCode;
+  List<String> jogadores = [];
+
+  @override
+  void initState() {
+    super.initState();
+    roomCode = generateRoomCode();
+    SalaSimulada.criarSala(roomCode, "Você");
+    atualizarJogadores();
+  }
+
+  void atualizarJogadores() {
+    final lista = SalaSimulada.listarJogadores(roomCode);
+    if (lista != null) {
+      setState(() {
+        jogadores = lista;
+      });
+    }
+  }
+
   String generateRoomCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    final rand = Random();
-    return String.fromCharCodes(Iterable.generate(
-        5, (_) => chars.codeUnitAt(rand.nextInt(chars.length))));
+    return List.generate(5, (index) => chars[(DateTime.now().millisecondsSinceEpoch + index) % chars.length]).join();
   }
 
   @override
   Widget build(BuildContext context) {
-    String roomCode = generateRoomCode();
-
     return Scaffold(
-      appBar: AppBar(title: Text("Criar Sala")),
-      body: Center(
+      appBar: AppBar(title: Text("Sala Criada")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Código da sua sala:", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 12),
+            Text("Código da Sala:", style: TextStyle(fontSize: 20)),
+            SizedBox(height: 8),
             Text(roomCode, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
+            Divider(height: 32),
+            Text("Jogadores na sala:", style: TextStyle(fontSize: 18)),
+            SizedBox(height: 12),
+            ...jogadores.map((j) => Text("• $j", style: TextStyle(fontSize: 16))),
+            Spacer(),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/game');
               },
-              child: Text("Entrar na Sala")
-            )
+              child: Text("Iniciar Partida"),
+            ),
           ],
         ),
       ),
